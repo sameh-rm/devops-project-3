@@ -147,7 +147,7 @@ jobs:
             npm audit fix
       - save_cache:
           paths: [frontend/node_modules]
-          key: frontend-packages-{{ checksum "./frontend/package-lock.json"}}-fixed
+          key: frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed
 
   scan-frontend:
     <<: *nodeImage
@@ -155,7 +155,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-fixed
+            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed
       - run:
           name: Scan frontend for security vulnerabilities
           working_directory: ./frontend
@@ -176,7 +176,7 @@ jobs:
             npm audit fix
       - save_cache:
           paths: [backend/node_modules]
-          key: backend-packages-{{ checksum "./backend/package-lock.json"}}-fixed
+          key: backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed
 
   scan-backend:
     <<: *nodeImage
@@ -184,7 +184,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - backend-packages-{{ checksum "./backend/package-lock.json"}}-fixed
+            - backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed
       - run:
           name: scan backend for security vulnerabilities
           working_directory: ./backend
@@ -289,7 +289,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - backend-packages-{{ checksum "./backend/package-lock.json"}}-fixed
+            - backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed
       - run:
           name: Run migrations
           working_directory: ./backend
@@ -330,7 +330,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-{{ checksum "./backend/package-lock.json"}}-fixed
+            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-{{ checksum "./backend/package-lock.json"}}-analyzed
       - run:
           name: Install AWS CLI dependencies
           working_directory: /tmp

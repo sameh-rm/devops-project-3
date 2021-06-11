@@ -66,7 +66,7 @@ jobs:
           command: npm install
       - save_cache:
           paths: [frontend/node_modules]
-          key: frontend-packages-{{ checksum "./frontend/package.json"}}
+          key: frontend-packages-{{ checksum "./frontend/package-lock.json"}}
 
   build-frontend:
     <<: *nodeImage
@@ -74,7 +74,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - frontend-packages-{{ checksum "./frontend/package.json"}}
+          - frontend-packages-{{ checksum "./frontend/package-lock.json"}}
       - run:
           name: Build front-end
           working_directory: ./frontend
@@ -91,7 +91,7 @@ jobs:
           command: npm install
       - save_cache:
           paths: [backend/node_modules]
-          key: backend-packages-{{ checksum "./backend/package.json"}}
+          key: backend-packages-{{ checksum "./backend/package-lock.json"}}
 
   build-backend:
     <<: *nodeImage
@@ -99,16 +99,12 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - backend-packages-{{ checksum "./backend/package.json"}}
+            - backend-packages-{{ checksum "./backend/package-lock.json"}}
       - run:
           name: Backend build
           working_directory: ./backend
           command: npm run build
-      - slack/notify:
-          branch_pattern: production
-          event: fail
-          mentions: '<@U8XXXXXXX>, @UserName'
-          template: basic_fail_1
+
 
   test-frontend:
     <<: *nodeImage
@@ -118,7 +114,7 @@ jobs:
       # Restore from cache
       - restore_cache:
           keys: 
-            - frontend-packages-{{ checksum "./frontend/package.json"}}
+            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}
       # Your job code here
       - run:
           name: Run frontend test
@@ -131,7 +127,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - backend-packages-{{ checksum "./backend/package.json"}}
+            - backend-packages-{{ checksum "./backend/package-lock.json"}}
       - run:
           name: run backend test
           working_directory: ./backend
@@ -143,7 +139,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - frontend-packages-{{ checksum "./frontend/package.json"}}
+            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}
       - run:
           name: Fix security vulnerabilities
           working_directory: ./frontend
@@ -151,7 +147,7 @@ jobs:
             npm audit fix
       - save_cache:
           paths: [frontend/node_modules]
-          key: frontend-packages-{{ checksum "./frontend/package.json"}}-fixed
+          key: frontend-packages-{{ checksum "./frontend/package-lock.json"}}-fixed
 
   scan-frontend:
     <<: *nodeImage
@@ -159,7 +155,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - frontend-packages-{{ checksum "./frontend/package.json"}}-fixed
+            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-fixed
       - run:
           name: Scan frontend for security vulnerabilities
           working_directory: ./frontend
@@ -172,7 +168,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - backend-packages-{{ checksum "./backend/package.json"}}
+            - backend-packages-{{ checksum "./backend/package-lock.json"}}
       - run:
           name: Fix security vulnerabilities
           working_directory: ./backend
@@ -180,7 +176,7 @@ jobs:
             npm audit fix
       - save_cache:
           paths: [backend/node_modules]
-          key: backend-packages-{{ checksum "./backend/package.json"}}-fixed
+          key: backend-packages-{{ checksum "./backend/package-lock.json"}}-fixed
 
   scan-backend:
     <<: *nodeImage
@@ -188,7 +184,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - backend-packages-{{ checksum "./backend/package.json"}}-fixed
+            - backend-packages-{{ checksum "./backend/package-lock.json"}}-fixed
       - run:
           name: scan backend for security vulnerabilities
           working_directory: ./backend
@@ -293,7 +289,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - backend-packages-{{ checksum "./backend/package.json"}}-fixed
+            - backend-packages-{{ checksum "./backend/package-lock.json"}}-fixed
       - run:
           name: Run migrations
           working_directory: ./backend
@@ -334,7 +330,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - frontend-packages-{{ checksum "./frontend/package.json"}}-{{ checksum "./backend/package.json"}}-fixed
+            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-{{ checksum "./backend/package-lock.json"}}-fixed
       - run:
           name: Install AWS CLI dependencies
           working_directory: /tmp

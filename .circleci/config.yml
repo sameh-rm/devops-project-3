@@ -68,19 +68,6 @@ jobs:
           paths: [frontend/node_modules]
           key: frontend-packages-{{ checksum "./frontend/package-lock.json"}}
 
-  build-frontend:
-    <<: *nodeImage
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-          - frontend-packages-{{ checksum "./frontend/package-lock.json"}}
-      - run:
-          name: Build front-end
-          working_directory: ./frontend
-          command: npm run build
-
-
   install-backend-dependencies:
     <<: *nodeImage
     steps:
@@ -92,47 +79,7 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-packages-{{ checksum "./backend/package-lock.json"}}
-
-  build-backend:
-    <<: *nodeImage
-    steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - backend-packages-{{ checksum "./backend/package-lock.json"}}
-      - run:
-          name: Backend build
-          working_directory: ./backend
-          command: npm run build
-
-
-  test-frontend:
-    <<: *nodeImage
-    steps:
-      # Checkout code from git
-      - checkout
-      # Restore from cache
-      - restore_cache:
-          keys: 
-            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}
-      # Your job code here
-      - run:
-          name: Run frontend test
-          working_directory: ./frontend
-          command: npm test
-
-  test-backend:
-    <<: *nodeImage
-    steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - backend-packages-{{ checksum "./backend/package-lock.json"}}
-      - run:
-          name: run backend test
-          working_directory: ./backend
-          command: npm test
-
+  
   analyze-frontend:
     <<: *nodeImage
     steps:
@@ -149,19 +96,6 @@ jobs:
           paths: [frontend/node_modules]
           key: frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed
 
-  scan-frontend:
-    <<: *nodeImage
-    steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed
-      - run:
-          name: Scan frontend for security vulnerabilities
-          working_directory: ./frontend
-          command: |
-            npm audit --audit-level=critical
-
   analyze-backend:
     <<: *nodeImage
     steps:
@@ -177,6 +111,73 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed
+          
+  build-frontend:
+    <<: *nodeImage
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed
+      - run:
+          name: Build front-end
+          working_directory: ./frontend
+          command: npm run build
+
+
+
+  build-backend:
+    <<: *nodeImage
+    steps:
+      - checkout
+      - restore_cache:
+          keys: 
+            - backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed
+      - run:
+          name: Backend build
+          working_directory: ./backend
+          command: npm run build
+
+
+  test-frontend:
+    <<: *nodeImage
+    steps:
+      # Checkout code from git
+      - checkout
+      # Restore from cache
+      - restore_cache:
+          keys: 
+            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed
+      # Your job code here
+      - run:
+          name: Run frontend test
+          working_directory: ./frontend
+          command: npm test
+
+  test-backend:
+    <<: *nodeImage
+    steps:
+      - checkout
+      - restore_cache:
+          keys: 
+            - backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed
+      - run:
+          name: run backend test
+          working_directory: ./backend
+          command: npm test
+
+  scan-frontend:
+    <<: *nodeImage
+    steps:
+      - checkout
+      - restore_cache:
+          keys: 
+            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed
+      - run:
+          name: Scan frontend for security vulnerabilities
+          working_directory: ./frontend
+          command: |
+            npm audit --audit-level=critical
 
   scan-backend:
     <<: *nodeImage

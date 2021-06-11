@@ -66,7 +66,7 @@ jobs:
           command: npm install
       - save_cache:
           paths: [frontend/node_modules]
-          key: frontend-packages-{{ checksum "./frontend/package-lock.json"}}
+          key: frontend-packages-{{ checksum "./frontend/package-lock.json"}}-${CIRCLE_WORKFLOW_ID:0:7}
 
   install-backend-dependencies:
     <<: *nodeImage
@@ -78,7 +78,7 @@ jobs:
           command: npm install
       - save_cache:
           paths: [backend/node_modules]
-          key: backend-packages-{{ checksum "./backend/package-lock.json"}}
+          key: backend-packages-{{ checksum "./backend/package-lock.json"}}-${CIRCLE_WORKFLOW_ID:0:7}
   
   analyze-frontend:
     <<: *nodeImage
@@ -86,7 +86,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}
+            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Fix security vulnerabilities
           working_directory: ./frontend
@@ -95,7 +95,7 @@ jobs:
             npm audit fix
       - save_cache:
           paths: [frontend/node_modules]
-          key: frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed
+          key: frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed-${CIRCLE_WORKFLOW_ID:0:7}
 
   analyze-backend:
     <<: *nodeImage
@@ -103,7 +103,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - backend-packages-{{ checksum "./backend/package-lock.json"}}
+            - backend-packages-{{ checksum "./backend/package-lock.json"}}-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Fix security vulnerabilities
           working_directory: ./backend
@@ -112,7 +112,7 @@ jobs:
             npm audit fix
       - save_cache:
           paths: [backend/node_modules]
-          key: backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed
+          key: backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed-${CIRCLE_WORKFLOW_ID:0:7}
           
   build-frontend:
     <<: *nodeImage
@@ -120,7 +120,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed
+          - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Build front-end
           working_directory: ./frontend
@@ -134,7 +134,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed
+            - backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Backend build
           working_directory: ./backend
@@ -149,7 +149,7 @@ jobs:
       # Restore from cache
       - restore_cache:
           keys: 
-            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed
+            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed-${CIRCLE_WORKFLOW_ID:0:7}
       # Your job code here
       - run:
           name: Run frontend test
@@ -162,7 +162,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed
+            - backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: run backend test
           working_directory: ./backend
@@ -174,7 +174,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed
+            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-analyzed-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Scan frontend for security vulnerabilities
           working_directory: ./frontend
@@ -187,7 +187,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed
+            - backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: scan backend for security vulnerabilities
           working_directory: ./backend
@@ -292,7 +292,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed
+            - backend-packages-{{ checksum "./backend/package-lock.json"}}-analyzed-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Run migrations
           working_directory: ./backend
@@ -333,7 +333,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-{{ checksum "./backend/package-lock.json"}}-analyzed
+            - frontend-packages-{{ checksum "./frontend/package-lock.json"}}-{{ checksum "./backend/package-lock.json"}}-analyzed-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Install AWS CLI dependencies
           working_directory: /tmp

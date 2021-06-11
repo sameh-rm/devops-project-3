@@ -1,6 +1,7 @@
 ---
   - name: "show remote environment"
     shell: env
+    shell: pwd && ls -la
 
   - name: "copy backend binaries"
     become: yes

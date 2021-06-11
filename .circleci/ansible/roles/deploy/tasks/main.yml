@@ -1,12 +1,10 @@
 ---
   - name: "show remote environment"
     shell: env
-    shell: pwd && ls -la
-
   - name: "copy backend binaries"
     become: yes
     copy:
-      src: ../../../../backend/dist
+      src: ../../../../../backend/dist
       dest: /home/ubuntu/udapepole_app
       recursive: true
 

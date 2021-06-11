@@ -363,6 +363,8 @@ jobs:
           name: Deploy backend
           working_directory: ./.circleci/ansible
           command: |
+            pwd
+            ls -la
             cat inventory
             ansible-playbook -i inventory deploy-backend.yml -vv
       # Here's where you will add some code to rollback on failure  

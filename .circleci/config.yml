@@ -120,6 +120,10 @@ jobs:
           name: Run frontend test
           working_directory: ./frontend
           command: npm test
+      - persist_to_workspace:
+          root: .
+          paths:
+            - frontend/node_modules
 
   test-backend:
     <<: *nodeImage
@@ -131,6 +135,10 @@ jobs:
           name: run backend test
           working_directory: ./backend
           command: npm test
+      - persist_to_workspace:
+          root: .
+          paths:
+            - backend/node_modules
 
   scan-frontend:
     <<: *nodeImage
@@ -182,7 +190,7 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text)
-            
+            cat $BACKEND_IP
             curl -H "Content-Type: text/plain" -H "token: 12233870-e472-4eaa-a8ff-a75afd1a9a26" \
             --request PUT --data "http://$BACKEND_IP:3030" https://api.memstash.io/values/BACKEND_URL
             

@@ -63,10 +63,13 @@ jobs:
       - run:
           name: npm install
           working_directory: ./frontend
-          command: npm install
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-packages
+          command: |
+            npm install
+            npm audit fix
+      - persist_to_workspace:
+          root: .
+          paths:
+            - frontend/node_modules
 
   install-backend-dependencies:
     <<: *nodeImage
@@ -75,66 +78,32 @@ jobs:
       - run:
           name: npm install
           working_directory: ./backend
-          command: npm install
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-packages
-  
-  analyze-frontend:
-    <<: *nodeImage
-    steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - frontend-packages
-      - run:
-          name: Fix security vulnerabilities
-          working_directory: ./frontend
           command: |
-            npm install
             npm audit fix
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-packages-analyzed
+            npm install
+      - persist_to_workspace:
+          root: .
+          paths:
+            - backend/node_modules
 
-  analyze-backend:
-    <<: *nodeImage
-    steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - backend-packages
-      - run:
-          name: Fix security vulnerabilities
-          working_directory: ./backend
-          command: |
-            npm install
-            npm audit fix
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-packages-analyzed
           
   build-frontend:
     <<: *nodeImage
     steps:
       - checkout
-      - restore_cache:
-          keys:
-          - frontend-packages-analyzed
+      - attach_workspace:
+          at: .
       - run:
           name: Build front-end
           working_directory: ./frontend
           command: npm run build
 
-
-
   build-backend:
     <<: *nodeImage
     steps:
       - checkout
-      - restore_cache:
-          keys: 
-            - backend-packages-analyzed
+      - attach_workspace:
+          at: .
       - run:
           name: Backend build
           working_directory: ./backend
@@ -146,10 +115,8 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      # Restore from cache
-      - restore_cache:
-          keys: 
-            - frontend-packages-analyzed
+      - attach_workspace:
+          at: .
       # Your job code here
       - run:
           name: Run frontend test
@@ -160,9 +127,8 @@ jobs:
     <<: *nodeImage
     steps:
       - checkout
-      - restore_cache:
-          keys: 
-            - backend-packages-analyzed
+      - attach_workspace:
+          at: .
       - run:
           name: run backend test
           working_directory: ./backend
@@ -172,9 +138,8 @@ jobs:
     <<: *nodeImage
     steps:
       - checkout
-      - restore_cache:
-          keys: 
-            - frontend-packages-analyzed
+      - attach_workspace:
+          at: .
       - run:
           name: Scan frontend for security vulnerabilities
           working_directory: ./frontend
@@ -185,9 +150,8 @@ jobs:
     <<: *nodeImage
     steps:
       - checkout
-      - restore_cache:
-          keys: 
-            - backend-packages-analyzed
+      - attach_workspace:
+          at: .
       - run:
           name: scan backend for security vulnerabilities
           working_directory: ./backend
@@ -290,9 +254,8 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - restore_cache:
-          keys:
-            - backend-packages-analyzed
+      - attach_workspace:
+          at: .
       - run:
           name: Run migrations
           working_directory: ./backend
@@ -331,9 +294,8 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - restore_cache:
-          keys:
-            - frontend-packages-analyzed
+      - attach_workspace:
+          at: .
       - run:
           name: Install AWS CLI dependencies
           working_directory: /tmp
@@ -482,15 +444,10 @@ workflows:
       - install-frontend-dependencies
       - install-backend-dependencies
 
-      - analyze-backend:
-          requires: [install-frontend-dependencies]
-      - analyze-frontend:
-          requires: [install-backend-dependencies]
-
       - scan-backend:
-          requires: [analyze-backend]
+          requires: [install-backend-dependencies]
       - scan-frontend:
-          requires: [analyze-frontend]
+          requires: [install-frontend-dependencies]
 
       - build-frontend:
           requires: [scan-frontend]

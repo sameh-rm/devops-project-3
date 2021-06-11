@@ -148,7 +148,6 @@ jobs:
           name: Fix security vulnerabilities
           working_directory: ./frontend
           command: |
-            npm install
             npm audit fix
       - save_cache:
           paths: [frontend/node_modules]
@@ -165,7 +164,6 @@ jobs:
           name: Scan frontend for security vulnerabilities
           working_directory: ./frontend
           command: |
-            npm install
             npm audit --audit-level=critical
 
   analyze-backend:
@@ -179,7 +177,6 @@ jobs:
           name: Fix security vulnerabilities
           working_directory: ./backend
           command: |
-            npm install
             npm audit fix
       - save_cache:
           paths: [backend/node_modules]
@@ -196,7 +193,6 @@ jobs:
           name: scan backend for security vulnerabilities
           working_directory: ./backend
           command: |
-            npm install
             npm audit --audit-level=critical
 
   deploy-infrastructure:

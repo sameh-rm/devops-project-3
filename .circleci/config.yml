@@ -360,6 +360,12 @@ jobs:
             pip install awscli
             aws --version
       - run:
+          name: project
+          working_directory: /
+          command: |
+            pwd
+            ls -la
+      - run:
           name: Deploy backend
           working_directory: ./.circleci/ansible/
           command: |

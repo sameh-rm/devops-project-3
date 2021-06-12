@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   slack: circleci/slack@4.4.2
+
 node_image: &nodeImage
   docker:
     - image: circleci/node:13.8.0
@@ -95,6 +96,13 @@ jobs:
           name: Build front-end
           working_directory: ./frontend
           command: npm run build
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
+      - slack/notify:
+          channel: ABCXYZ
+          event: fail
+          template: basic_fail_1
 
   build-backend:
     <<: *nodeImage
@@ -106,8 +114,14 @@ jobs:
           name: Backend build
           working_directory: ./backend
           command: npm run build
-
-
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
+      - slack/notify:
+          channel: ABCXYZ
+          event: fail
+          template: basic_fail_1
+          
   test-frontend:
     <<: *nodeImage
     steps:
@@ -450,14 +464,14 @@ jobs:
           command: |
             Prev_WorkFlow_ID=$(curl -H "token: 12233870-e472-4eaa-a8ff-a75afd1a9a26" --request GET https://api.memstash.io/values/WorkflowID)
             Current_Workflow_ID=${CIRCLE_WORKFLOW_ID:0:7}
-            if [[ ! -z "$WorkflowID" && "$Current_Workflow_ID" != "$Prev_WorkFlow_ID" ]]
+            if [[ ! -z "$Prev_WorkFlow_ID" && "$Current_Workflow_ID" != "$Prev_WorkFlow_ID" ]]
             then  
               echo "$Prev_WorkFlow_ID!=$Current_Workflow_ID => will delete Prev_WorkFlow_ID version"
               aws s3 rm "s3://udapeople-${Prev_WorkFlow_ID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${Prev_WorkFlow_ID}"
               aws cloudformation delete-stack --stack-name "udapeople-backend-${Prev_WorkFlow_ID}"
             else
-              echo "$Prev_WorkFlow_ID==$Current_Workflow_ID => nothing needs to be done..."
+              echo "$Prev_WorkFlow_ID==$Current_Workflow_ID or its the first version"
             fi
             
 workflows:

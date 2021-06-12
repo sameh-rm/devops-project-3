@@ -361,11 +361,12 @@ jobs:
             aws --version
       - run:
           name: Deploy backend
+          working_directory: ./.circleci/ansible/
           command: |
             pwd
             ls -la
-            cat ./.circleci/ansible/inventory
-            ansible-playbook -i ./.circleci/ansible/inventory ./.circleci/ansible/deploy-backend.yml -vvv
+            cat inventory
+            ansible-playbook -i inventory deploy-backend.yml -vvv
       # Here's where you will add some code to rollback on failure  
       - destroy_environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}

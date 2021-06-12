@@ -96,13 +96,7 @@ jobs:
           name: Build front-end
           working_directory: ./frontend
           command: npm run build
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
-      - slack/notify:
-          channel: ABCXYZ
-          event: fail
-          template: basic_fail_1
+
 
   build-backend:
     <<: *nodeImage
@@ -114,13 +108,7 @@ jobs:
           name: Backend build
           working_directory: ./backend
           command: npm run build
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
-      - slack/notify:
-          channel: ABCXYZ
-          event: fail
-          template: basic_fail_1
+
 
   test-frontend:
     <<: *nodeImage
@@ -353,6 +341,13 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert_migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
+      - slack/notify:
+          channel: ABCXYZ
+          event: fail
+          template: basic_fail_1
 
   deploy-backend:
     <<: *alpineImage
@@ -394,6 +389,13 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert_migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
+      - slack/notify:
+          channel: ABCXYZ
+          event: fail
+          template: basic_fail_1
 
   smoke-test:
     <<: *alpineImage

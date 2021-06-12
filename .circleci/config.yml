@@ -486,12 +486,8 @@ workflows:
           requires: [install-frontend-dependencies]
 
       - build-frontend:
-          context:
-            - slack-secrets
           requires: [scan-frontend]
       - build-backend:
-          context:
-            - slack-secrets
           requires: [scan-backend]
           
       - test-frontend:

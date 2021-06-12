@@ -4,18 +4,15 @@
 
   - name: "copy backend binaries"
     become: yes
-    copy:
-      src: /project/backend/dist
+    synchronize:
+      src: ../../backend/dist
       dest: /home/ubuntu/udapepole_app
-      owner: ubuntu
-      group: ubuntu
-      mode: "0644"
       recursive: true
 
   - name: "copy node_modules"
     become: yes
     synchronize:
-      src: /project/backend/node_modules
+      src: ../../backend/node_modules
       dest: /home/ubuntu/udapepole_app
       recursive: true
 

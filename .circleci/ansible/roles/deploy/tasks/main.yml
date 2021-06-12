@@ -7,6 +7,9 @@
     copy:
       src: /project/backend/dist
       dest: /home/ubuntu/udapepole_app
+      owner: ubuntu
+      group: ubuntu
+      mode: "0644"
       recursive: true
 
   - name: "copy node_modules"

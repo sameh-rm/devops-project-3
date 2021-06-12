@@ -8,7 +8,7 @@
       remote_src: true
       src: ../../backend/dist
       dest: /home/ubuntu/udapepole_app
-      recursive: true
+      # recursive: true
 
   - name: "copy node_modules"
     become: yes

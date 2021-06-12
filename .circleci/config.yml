@@ -121,7 +121,7 @@ jobs:
           channel: ABCXYZ
           event: fail
           template: basic_fail_1
-          
+
   test-frontend:
     <<: *nodeImage
     steps:
@@ -486,8 +486,12 @@ workflows:
           requires: [install-frontend-dependencies]
 
       - build-frontend:
+          context:
+            - slack-secrets
           requires: [scan-frontend]
       - build-backend:
+          context:
+            - slack-secrets
           requires: [scan-backend]
           
       - test-frontend:

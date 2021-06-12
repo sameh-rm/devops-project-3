@@ -330,24 +330,18 @@ jobs:
           root: .
           paths:
             - frontend/dist
-
       - run:
           name: Deploy frontend objects
           working_directory: ./frontend
           command: |
             aws s3 cp ./dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
+
       # Here's where you will add some code to rollback on failure      
       - destroy_environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert_migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
-      - slack/notify:
-          channel: ABCXYZ
-          event: fail
-          template: basic_fail_1
+
 
   deploy-backend:
     <<: *alpineImage
@@ -382,20 +376,13 @@ jobs:
             pwd
             ls -la
             cat inventory
-            
             ansible-playbook -i inventory deploy-backend.yml -vvv
+
       # Here's where you will add some code to rollback on failure  
       - destroy_environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert_migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
-      - slack/notify:
-          channel: ABCXYZ
-          event: fail
-          template: basic_fail_1
 
   smoke-test:
     <<: *alpineImage
@@ -421,10 +408,10 @@ jobs:
             URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.us-east-2.amazonaws.com/index.html"
             curl -s ${URL} | grep "Welcome"
       # Here's where you will add some code to rollback on failure  
-      # - destroy_environment:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      # - revert_migrations:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy_environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert_migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   cloudfront-update:
     <<: *awsImage
@@ -475,7 +462,14 @@ jobs:
             else
               echo "$Prev_WorkFlow_ID==$Current_Workflow_ID or its the first version"
             fi
-            
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
+      - slack/notify:
+          channel: ABCXYZ
+          event: fail
+          template: basic_fail_1      
+          
 workflows:
   udapepole:
     jobs:

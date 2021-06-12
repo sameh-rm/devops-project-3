@@ -4,11 +4,10 @@
 
   - name: "copy backend binaries"
     become: yes
-    copy:
-      remote_src: true
-      src: /project/backend/dist
-      dest: /home/ubuntu/udapepole_app
-      # recursive: true
+    synchronize:
+      src: ../../backend/dist
+      dest: /home/ubuntu/uda_app
+      recursive: true
 
   - name: "copy node_modules"
     become: yes

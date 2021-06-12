@@ -426,7 +426,7 @@ jobs:
           working_directory: ./.circleci/files
           command: |
             WorkflowID=$(aws cloudformation \
-              list-exports --query "Exports[?Name==WorkflowID].Value" \
+              list-exports --query "Exports[?Name==`WorkflowID`].Value" \
               --no-paginate --output text)
             curl -H "Content-Type: text/plain" -H "token: 12233870-e472-4eaa-a8ff-a75afd1a9a26" --request PUT --data "" https://api.memstash.io/values/WorkflowID
       - run:

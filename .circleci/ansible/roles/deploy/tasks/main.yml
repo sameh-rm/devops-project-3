@@ -6,14 +6,14 @@
     become: yes
     copy:
       remote_src: true
-      src: ../../backend/dist
+      src: /project/backend/dist
       dest: /home/ubuntu/udapepole_app
       # recursive: true
 
   - name: "copy node_modules"
     become: yes
     synchronize:
-      src: ../../backend/node_modules
+      src: /project/backend/node_modules
       dest: /home/ubuntu/udapepole_app
       recursive: true
 

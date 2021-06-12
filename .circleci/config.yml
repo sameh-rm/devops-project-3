@@ -361,10 +361,11 @@ jobs:
             aws --version
       - run:
           name: project
-          working_directory: /
+          working_directory: ./backend
           command: |
             pwd
             ls -la
+            npm run build
       - run:
           name: Deploy backend
           working_directory: ./.circleci/ansible/
@@ -372,6 +373,7 @@ jobs:
             pwd
             ls -la
             cat inventory
+            
             ansible-playbook -i inventory deploy-backend.yml -vvv
       # Here's where you will add some code to rollback on failure  
       - destroy_environment:

@@ -166,6 +166,10 @@ jobs:
           command: |
             npm audit fix
             npm audit --audit-level=critical
+      - persist_to_workspace:
+          root: .
+          paths:
+            - frontend
 
   scan-backend:
     <<: *nodeImage
@@ -179,7 +183,11 @@ jobs:
           command: |
             npm audit fix
             npm audit --audit-level=critical
-
+      - persist_to_workspace:
+          root: .
+          paths:
+            - backend
+            
   deploy-infrastructure:
     <<: *awsImage
     steps:

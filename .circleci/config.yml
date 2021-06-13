@@ -293,10 +293,10 @@ jobs:
           at: .
       - run:
           name: Run migrations
-          working_directory: ./backend
+          working_directory: .
           command: |
-            cat ./frontend/package.json
-            cat ./backend/package.json
+            cat frontend/package.json
+            cat backend/package.json
       - run:
           name: Run migrations
           working_directory: ./backend

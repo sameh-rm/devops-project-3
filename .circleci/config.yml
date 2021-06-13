@@ -187,7 +187,7 @@ jobs:
           root: .
           paths:
             - backend
-            
+
   deploy-infrastructure:
     <<: *awsImage
     steps:
@@ -291,6 +291,12 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - run:
+          name: Run migrations
+          working_directory: ./backend
+          command: |
+            cat frontend/package.json
+            cat backend/package.json
       - run:
           name: Run migrations
           working_directory: ./backend

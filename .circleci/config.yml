@@ -437,11 +437,11 @@ jobs:
             curl -sL https://rpm.nodesource.com/setup_10.x | bash -
             yum install -y nodejs
       - run:
-          name: Store old WorkflowID in memstash for cleanup phase
+          name: Store old WorkflowID in memstash 
           working_directory: ./.circleci/files
           command: |
             WorkflowID=$(aws cloudformation list-exports --query "Exports[?Name=='WorkflowID'].Value" --no-paginate --output text)
-            curl -H "Content-Type: text/plain" -H "token: 12233870-e472-4eaa-a8ff-a75afd1a9a26" --request PUT --data "" https://api.memstash.io/values/WorkflowID
+            curl -H "Content-Type: text/plain" -H "token: 12233870-e472-4eaa-a8ff-a75afd1a9a26" --request PUT --data "$WorkflowID" https://api.memstash.io/values/WorkflowID
       - run:
           name: Update cloudfront distribution
           working_directory: ./.circleci/files
